@@ -7,6 +7,14 @@ from models.state import State
 
 
 @app_views.route('/states', strict_slashes=False, methods=['GET'])
+def get_all_states():
+    """
+        Returns all States objects
+    """
+    return jsonify([user.to_dict() for user in
+                    storage.all(State).values()]), 200
+
+
 @app_views.route('/states/<state_id>', methods=['GET'])
 def get_states(state_id=None):
     """
@@ -18,7 +26,8 @@ def get_states(state_id=None):
         abort(404)
 
 
-@app_views.route('/states/<state_id>', strict_slashes=False, methods=['DELETE'])
+@app_views.route('/states/<state_id>',
+                 methods=['DELETE'], strict_slashes=False)
 def delete_state(state_id=None):
     """
         Deletes a state with id and returns an empty JSON
