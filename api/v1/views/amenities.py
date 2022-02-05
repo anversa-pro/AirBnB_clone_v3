@@ -14,11 +14,12 @@ def get_all_amenities():
     return jsonify([amenity.to_dict() for amenity in
                     storage.all(Amenity).values()]), 200
 
+
 @app_views.route('/amenities/<amenity_id>',
                  methods=['GET'], strict_slashes=False)
 def get_amenity_by_id(amenity_id):
     """
-        An amenity object based on its id. Error if not found
+        return an amenity based on id or error if not found
     """
     amenity = storage.get(Amenity, amenity_id)
     if not amenity:
