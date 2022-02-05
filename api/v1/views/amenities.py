@@ -7,6 +7,14 @@ from models import storage
 
 
 @app_views.route('/amenities', strict_slashes=False, methods=['GET'])
+def get_all_amenities():
+    """
+        All amenity objects
+    """
+    return jsonify([amenity.to_dict() for amenity in
+                    storage.all(Amenity).values()]), 200
+
+
 @app_views.route('/amenities/<amenity_id>', strict_slashes=False, methods=['GET'])
 def get_amenity_by_id(amenity_id):
     """
@@ -17,8 +25,8 @@ def get_amenity_by_id(amenity_id):
         abort(404)
     return jsonify(amenity.to_dict()), 200
 
-
-@app_views.route('/amenities/<amenity_id>', strict_slashes=False, methods=['DELETE'])
+@app_views.route('/amenities/<amenity_id>',
+                 methods=['DELETE'], strict_slashes=False)
 def delete_amenity(amenity_id):
     """
         Deletes an amenity with a id and returns an empty JSON

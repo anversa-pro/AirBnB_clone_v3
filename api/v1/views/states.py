@@ -3,6 +3,7 @@
 from api.v1.views import app_views
 from flask import jsonify, abort, request, make_response
 from models import storage
+from models import state
 from models.state import State
 
 
@@ -11,7 +12,7 @@ def get_all_states():
     """
         Returns all States objects
     """
-    return jsonify([user.to_dict() for user in
+    return jsonify([state.to_dict() for state in
                     storage.all(State).values()]), 200
 
 
