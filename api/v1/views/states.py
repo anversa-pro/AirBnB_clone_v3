@@ -6,7 +6,7 @@ from models import storage
 from models.state import State
 
 
-@app_views.route('/states', methods=['GET'])
+@app_views.route('/states', strict_slashes=False, methods=['GET'])
 @app_views.route('/states/<state_id>', methods=['GET'])
 def get_states(state_id=None):
     """
@@ -18,7 +18,7 @@ def get_states(state_id=None):
         abort(404)
 
 
-@app_views.route('/states/<state_id>', methods=['DELETE'])
+@app_views.route('/states/<state_id>', strict_slashes=False, methods=['DELETE'])
 def delete_state(state_id=None):
     """
         Deletes a state with id and returns an empty JSON
@@ -31,7 +31,7 @@ def delete_state(state_id=None):
     return make_response(jsonify({}), 200)
 
 
-@app_views.route('/states', methods=['POST'])
+@app_views.route('/states', strict_slashes=False, methods=['POST'])
 def create_state():
     """
         Stores and returns a new state
@@ -46,7 +46,7 @@ def create_state():
     return make_response(jsonify(state.to_dict()), 201)
 
 
-@app_views.route('/states/<state_id>', methods=['PUT'])
+@app_views.route('/states/<state_id>', strict_slashes=False, methods=['PUT'])
 def update_state(state_id=None):
     """
         Return the information of a given state
