@@ -8,6 +8,14 @@ from models import storage
 
 
 @app_views.route('/users', strict_slashes=False, methods=['GET'])
+def get_all_users():
+    """
+        Returns all user objects
+    """
+    return jsonify([user.to_dict() for user in
+                    storage.all(User).values()]), 200
+
+
 @app_views.route('/users/<user_id>', strict_slashes=False, methods=['GET'])
 def get_user_by_id(user_id):
     """
@@ -16,7 +24,6 @@ def get_user_by_id(user_id):
     user = storage.get(User, user_id)
     if not user:
         abort(404)
-    return jsonify(user.to_dict()), 200
 
 
 @app_views.route('/users', strict_slashes=False,
