@@ -16,7 +16,7 @@ def get_all_states():
                     storage.all(State).values()]), 200
 
 
-@app_views.route('/states/<state_id>', methods=['GET'])
+@app_views.route('/states/<state_id>', strict_slashes=False, methods=['GET'])
 def get_states(state_id=None):
     """
         All states or one state of method GET and returns
