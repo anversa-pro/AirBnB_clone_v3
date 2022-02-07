@@ -24,7 +24,7 @@ def get_user_by_id(user_id):
     user = storage.get(User, user_id)
     if not user:
         abort(404)
-    return jsonify(User.to_dict()), 200
+    return jsonify(user.to_dict()), 200
 
 
 @app_views.route('/users/<user_id>', strict_slashes=False,
