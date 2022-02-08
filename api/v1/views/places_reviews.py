@@ -47,29 +47,27 @@ def delete_review(review_id=None):
     return make_response(jsonify({}), 200)
 
 
-@app_views.route('/places/<place_id>/reviews', strict_slashes=False,
-                 methods=['POST'])
-def create_review(place_id=None):
-    """
-        Stores with id and returns a review in a given place
-    """
-    review_object = request.get_json(silent=True)
-    if not review_object:
-        return jsonify({'error': 'Not a JSON'}), 400
+@app_views.route('/places/<place_id>/reviews',
+                 methods=['POST'], strict_slashes=False)
+def post_review(place_id=None):
+    """" Creates a Review object"""
+    request_json = request.get_json()
     place = storage.get(Place, place_id)
     if not place:
         abort(404)
-    if 'user_id' not in review_object:
-        return jsonify({'error': 'Missing user_id'}), 400
-    user = storage.get(User, review_object.get('user_id'))
+    if request_json is None:
+        return make_response(jsonify({'error': 'Not a JSON'}), 400)
+    if 'user_id' not in request_json:
+        return make_response(jsonify({'error': 'Missing user_id'}), 400)
+    user = storage.get(User,  request_json.get('user_id'))
     if not user:
         abort(404)
-    if 'text' not in review_object:
-        return jsonify({'error': 'Missing text'}), 400
-    review_object['place_id'] = place_id
-    review = Review(**review_object)
+    if 'text' not in request_json:
+        return make_response(jsonify({'error': 'Missing text'}), 400)
+    review = Review(**request_json)
+    review.place_id = place_id
     review.save()
-    return jsonify(Review.to_dict()), 201
+    return make_response(jsonify(Review.to_dict(review)), 201)
 
 
 @app_views.route('/reviews/<review_id>', strict_slashes=False,
