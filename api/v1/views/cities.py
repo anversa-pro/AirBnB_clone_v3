@@ -7,8 +7,9 @@ from models.state import State
 from models.city import City
 
 
-@app_views.route('states/<state_id>/cities', strict_slashes=False, methods=['GET'])
-def get_all_cities(state_id=None):
+@app_views.route('/states/<state_id>/cities', strict_slashes=False,
+                 methods=['GET'])
+def get_all_cities(state_id):
     """
         Returns all Cities
     """
@@ -16,23 +17,23 @@ def get_all_cities(state_id=None):
     if not state:
         abort(404)
     cities_in_state = state.cities
-    return jsonify([City.to_dict(city) for city in cities_in_state]), 200
+    return jsonify([City.to_dict() for city in cities_in_state]), 200
 
 
 @app_views.route('cities/<city_id>', strict_slashes=False, methods=['GET'])
-def get_cities_by_id(city_id=None):
+def get_cities_by_id(city_id):
     """
         Returns an specific city given an id
     """
     city = storage.get(City, city_id)
     if not city:
         abort(404)
-    return jsonify(City.to_dict(city)), 200
+    return jsonify(City.to_dict()), 200
 
 
 @app_views.route('cities/<city_id>',
                  methods=['DELETE'], strict_slashes=False)
-def delete_city(city_id=None):
+def delete_city(city_id):
     """
         Deletes a state with id and returns an empty JSON
     """
@@ -41,17 +42,18 @@ def delete_city(city_id=None):
         abort(404)
     storage.delete(city)
     storage.save()
-    return make_response(jsonify({}), 200)
+    return jsonify({}), 200
 
 
-@app_views.route('/states/<id>/cities', methods=['POST'], strict_slashes=False)
-def create_city(state_id=None):
+@app_views.route('/states/<state_id>/cities', strict_slashes=False,
+                 methods=['POST'])
+def create_city(state_id):
     """" Creates a City object"""
-    jrequest = request.get_json()
+    jrequest = request.get_json(silent=True)
     state = storage.get(State, state_id)
     if not state:
         abort(404)
-    if jrequest is None:
+    if not jrequest:
         return make_response(jsonify({'error': 'Not a JSON'}), 400)
     if 'name' not in jrequest:
         return make_response(jsonify({'error': 'Missing name'}), 400)
@@ -62,17 +64,16 @@ def create_city(state_id=None):
 
 
 @app_views.route('/cities/<city_id>', methods=['PUT'], strict_slashes=False)
-def update_city(city_id=None):
+def update_city(city_id):
     """" Updates a City object"""
-    jrequest = request.get_json()
-    if jrequest is None:
+    jrequest = request.get_json(silent=True)
+    if not jrequest:
         return make_response(jsonify({'error': 'Not a JSON'}), 400)
     city = storage.get(City, city_id)
     if not city:
         abort(404)
-    ignore_keys = ['id', 'created_at', 'updated_at']
-    for key, value in jrequest.items():
-        if key not in ignore_keys:
-            setattr(city, key, value)
+    for key, val in jrequest.items():
+        if key not in ['id', 'state_id', 'created_at', 'updated_at']:
+            setattr(city, key, val)
     city.save()
-    return make_response(jsonify(State.to_dict(city)), 200)
+    return jsonify(city.to_dict()), 200
