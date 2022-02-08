@@ -9,7 +9,7 @@ from models.city import City
 
 @app_views.route('/states/<state_id>/cities', strict_slashes=False,
                  methods=['GET'])
-def get_all_cities(state_id):
+def get_all_cities(state_id=None):
     """
         Returns all Cities
     """
@@ -21,7 +21,7 @@ def get_all_cities(state_id):
 
 
 @app_views.route('cities/<city_id>', strict_slashes=False, methods=['GET'])
-def get_cities_by_id(city_id):
+def get_cities_by_id(city_id=None):
     """
         Returns an specific city given an id
     """
@@ -33,7 +33,7 @@ def get_cities_by_id(city_id):
 
 @app_views.route('cities/<city_id>',
                  methods=['DELETE'], strict_slashes=False)
-def delete_city(city_id):
+def delete_city(city_id=None):
     """
         Deletes a state with id and returns an empty JSON
     """
@@ -48,23 +48,25 @@ def delete_city(city_id):
 @app_views.route('/states/<state_id>/cities', strict_slashes=False,
                  methods=['POST'])
 def create_city(state_id):
-    """" Creates a City object"""
-    jrequest = request.get_json(silent=True)
+    """
+        Stores and returns a new city in a given state
+    """
+    city_json = request.get_json(silent=True)
+    if not city_json:
+        return jsonify({'error': 'Not a JSON'}), 400
     state = storage.get(State, state_id)
     if not state:
         abort(404)
-    if not jrequest:
-        return make_response(jsonify({'error': 'Not a JSON'}), 400)
-    if 'name' not in jrequest:
-        return make_response(jsonify({'error': 'Missing name'}), 400)
-    city = City(**jrequest)
-    city.state_id = state_id
+    if 'name' not in city_json:
+        return jsonify({'error': 'Missing name'}), 400
+    city_json['state_id'] = state_id
+    city = City(**city_json)
     city.save()
-    return make_response(jsonify(State.to_dict(city)), 201)
+    return jsonify(city.to_dict()), 201
 
 
 @app_views.route('/cities/<city_id>', methods=['PUT'], strict_slashes=False)
-def update_city(city_id):
+def update_city(city_id=None):
     """" Updates a City object"""
     jrequest = request.get_json(silent=True)
     if not jrequest:
