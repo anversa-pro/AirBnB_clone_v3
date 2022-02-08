@@ -18,7 +18,7 @@ def get_all_reviews(place_id):
     if not place:
         abort(404)
     reviews = place.reviews
-    return jsonify([review.to_dict() for review in reviews]), 200
+    return jsonify([Review.to_dict() for review in reviews]), 200
 
 
 @app_views.route('/reviews/<review_id>', strict_slashes=False,
@@ -30,7 +30,7 @@ def get_review_id(review_id):
     review = storage.get(Review, review_id)
     if not review:
         abort(404)
-    return jsonify(review.to_dict()), 200
+    return jsonify(Review.to_dict()), 200
 
 
 @app_views.route('/reviews/<review_id>', strict_slashes=False,
@@ -69,7 +69,7 @@ def create_review(place_id):
     review_object['place_id'] = place_id
     review = Review(**review_object)
     review.save()
-    return jsonify(review.to_dict()), 201
+    return jsonify(Review.to_dict()), 201
 
 
 @app_views.route('/reviews/<review_id>', strict_slashes=False,
@@ -89,4 +89,4 @@ def update_review(review_id):
         if key not in keys:
             setattr(review, key, val)
     review.save()
-    return jsonify(review.to_dict()), 200
+    return jsonify(Review.to_dict()), 200
