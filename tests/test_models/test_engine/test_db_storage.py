@@ -20,7 +20,6 @@ import json
 import os
 import pep8
 import unittest
-import pycodestyle
 
 DBStorage = db_storage.DBStorage
 classes = {"Amenity": Amenity, "City": City, "Place": Place,
