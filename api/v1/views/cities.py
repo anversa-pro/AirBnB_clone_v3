@@ -48,7 +48,9 @@ def delete_city(city_id=None):
 @app_views.route('/states/<state_id>/cities', strict_slashes=False,
                  methods=['POST'])
 def create_city(state_id=None):
-    """" Creates a City object"""
+    """" 
+    Creates a City object
+    """
     jrequest = request.get_json()
     state = storage.get(State, state_id)
     if not state:
