@@ -27,7 +27,7 @@ def get_all_places(city_id=None):
 @app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
 def get_place_by_id(place_id=None):
     """
-    Returns a specific Place given an object id 
+    Returns a specific Place given an object id
     """
     place = storage.get(Place, place_id)
     if not place:
