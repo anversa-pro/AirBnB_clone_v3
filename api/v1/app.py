@@ -5,13 +5,13 @@ Script to set and start Flask web application
 
 from flask import Flask
 from models import storage
-
 from api.v1.views import app_views
 from os import getenv
+from flask_cors import CORS
 
 app = Flask(__name__)
-
 app.register_blueprint(app_views)
+CORS(app, resources={r"/*": {"origins": ["0.0.0.0"]}})
 
 
 @app.teardown_appcontext
@@ -24,7 +24,7 @@ def close_method(self):
 
 @app.errorhandler(404)
 def not_found(error):
-    """ Method to handle error 404 """
+    """ Method to handle error 404 ."""
 
     return {"error": "Not found"}, 404
 
